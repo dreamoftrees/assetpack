@@ -73,6 +73,10 @@ export interface PixiManifestOptions extends PluginOptions
      * @default true
      */
     legacyMetaDataOutput?: boolean;
+    /**
+     * A prefix to be added to the src asset paths.
+     */
+    prefix?: string;
 }
 
 export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions, 'manifest' | 'mIgnore'>
@@ -85,6 +89,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             trimExtensions: false,
             includeMetaData: true,
             legacyMetaDataOutput: true,
+            prefix: '',
             ..._options,
         },
         tags: {
@@ -192,7 +197,7 @@ function collectAssets(
         bundleAssets.push({
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
             src: finalManifestAssets
-                .map((finalAsset) => path.relative(outputPath, finalAsset.path))
+                .map((finalAsset) => options.prefix + path.relative(outputPath, finalAsset.path))
                 .sort((a, b) => b.localeCompare(a)),
             data:  options.includeMetaData ? metadata : undefined
         });
